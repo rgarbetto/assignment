@@ -1,0 +1,214 @@
+---
+title: "A1 Tutorial Testing in rstudio and Data Exploration"
+author: "Richard Garbett"
+date: "5/23/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r packages}
+
+library(caret)
+library(psych)
+library(scatterplot3d)
+
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+
+```
+
+# code chunk 1
+
+```{r, echo = FALSE}
+## 1A
+
+IS_6482 <- getwd()
+
+setwd(IS_6482)
+
+CD_data <- read.csv("CD_additional_balanced.csv")
+
+summary(CD_data)
+
+##1B
+
+Factor_data <- CD_data %>%
+  mutate(
+    job = factor(job),
+    marital = factor(marital),
+    education = factor(education),
+    default = factor(default),
+    housing = factor(housing),
+    loan = factor(loan),
+    contact = factor(contact),
+    month = factor(month),
+    day_of_week = factor(day_of_week),
+    poutcome = factor(poutcome),
+    y = factor(y))
+
+summary(Factor_data)
+str(Factor_data)
+
+      
+```
+# code chunk 2
+
+```{r, echo = FALSE}
+##2A
+## Code for Histograms Age, Duration, Campaign, and pdays
+
+ggplot(Factor_data, aes(x=age)) + 
+  geom_histogram() +
+  labs(title = "Histogram for Age")
+
+ggplot(Factor_data, aes(x=duration)) + 
+  geom_histogram() +
+  labs(title = "Histogram for Duration")
+  
+ggplot(Factor_data, aes(x=campaign)) + 
+  geom_histogram() +
+  labs(title = "Histogram for Campaign")
+    
+ggplot(Factor_data, aes(x=pdays)) + 
+  geom_histogram() +
+  labs(title = "Histogram for pdays")
+
+##2B      
+## Code for boxplots Age, Duration, Compaign, and pdays      
+      
+ggplot(Factor_data, aes(x=age)) + 
+  geom_boxplot() +
+  labs(title = "Boxplot for Age")
+
+ggplot(Factor_data, aes(x=duration)) + 
+  geom_boxplot() +
+  labs(title = "Boxplot for Duration") 
+
+ggplot(Factor_data, aes(x=campaign)) + 
+  geom_boxplot() +
+  labs(title = "Boxplot for Campaign") 
+
+ggplot(Factor_data, aes(x=pdays)) + 
+  geom_boxplot() +
+  labs(title = "Boxplot for pdays") 
+
+##2C
+## Code for deciles Age, Duration, Compaign, and pdays 
+
+quantile(Factor_data$age, seq(from = 0, to = 1, by = 0.10))
+
+quantile(Factor_data$duration, seq(from = 0, to = 1, by = 0.10))
+
+quantile(Factor_data$campaign, seq(from = 0, to = 1, by = 0.10))
+
+quantile(Factor_data$pdays, seq(from = 0, to = 1, by = 0.10))
+
+
+```
+# code chunk 3
+
+```{r, echo = FALSE}
+
+##3A
+##Group by levels and count of each level and percentages
+
+Factor_data %>%
+  group_by(poutcome) %>%
+  summarize(count =n()) %>%
+  mutate(percentage = formattable::percent(count / sum(count))) ## installed formattable package
+
+Factor_data %>%
+  group_by(job) %>%
+  summarize(count =n()) %>%
+  mutate(percentage = formattable::percent(count / sum(count))) ## installed formattable package
+
+Factor_data %>%
+  group_by(education ) %>%
+  summarize(count =n()) %>%
+  mutate(percentage = formattable::percent(count / sum(count))) ## installed formattable package
+
+Factor_data %>%
+  group_by(y) %>%
+  summarize(count =n()) %>%
+  mutate(percentage = formattable::percent(count / sum(count))) ## installed formattable package
+
+##3B
+##barplots
+
+ggplot(Factor_data, aes(x=poutcome)) + 
+  geom_bar() +
+  labs(title = "Barplot for poutcome")
+
+ggplot(Factor_data, aes(x=job)) + 
+  geom_bar()+
+  labs(title = "Barplot for Job")
+
+ggplot(Factor_data, aes(x=education)) + 
+  geom_bar()+
+  labs(title = "Barplot for Education")
+
+ggplot(Factor_data, aes(x=y)) + 
+  geom_bar()+
+  labs(title = "Barplot for Target Variable Y")
+
+
+
+```
+# code chunk 4
+
+```{r, echo = FALSE}
+
+## 4A
+
+## Cor
+cor(Factor_data[c("age", "duration", "campaign", "pdays", "euribor3m", "emp.var.rate", "nr.employed")])
+
+## Pairs.panels
+pairs.panels(Factor_data[c("age", "duration", "campaign", "pdays", "euribor3m", "emp.var.rate", "nr.employed")])
+
+
+##4Bi
+
+#box plot
+ggplot(Factor_data, aes(x=duration, y=y)) + 
+  geom_boxplot() +
+  labs(title = "Boxplot for duration and target variable y") 
+
+ggplot(Factor_data, aes(x=emp.var.rate, y=y)) + 
+  geom_boxplot() +
+  labs(title = "Boxplot for emp.var.rate and target variable y") 
+
+ggplot(Factor_data, aes(x=cons.price.idx, y=y)) + 
+  geom_boxplot() +
+  labs(title = "Boxplot for cons.price.idx and target variable y") 
+
+ggplot(Factor_data, aes(x=cons.conf.idx, y=y)) + 
+  geom_boxplot() +
+  labs(title = "Boxplot for cons.conf.idx and target variable y") 
+
+##4Bii
+#aggregate
+aggregate(duration~y, summary, data = Factor_data)
+
+aggregate(emp.var.rate~y, summary, data = Factor_data)
+
+aggregate(cons.price.idx~y, summary, data = Factor_data)
+
+aggregate(cons.conf.idx~y, summary, data = Factor_data)
+
+
+##Ci
+scatterplot3d(Factor_data$age, Factor_data$campaign, Factor_data$duration, pch = as.numeric(Factor_data$y), main = "3D scatter plot of CD_additional_balanced data")
+legend('topright', legend = levels(Factor_data$y),  cex = 0.8, pch = 1:2)
+
+
+##Cii
+scatterplot3d(Factor_data$nr.employed, Factor_data$euribor3m, Factor_data$duration, pch = as.numeric(Factor_data$y), main = "3D scatter plot of CD_additional_balanced data")
+legend('topright', legend = levels(Factor_data$y),  cex = 0.8, pch = 1:2)
+
+```
