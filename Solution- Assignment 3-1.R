@@ -62,7 +62,7 @@ myCosineSpace2 <- multicos(myTerms2, tvectors=tk2, breakdown=TRUE)
 myCosineSpace2[1:7,1:7]
 
 
-# 7) Similar to the term matrices, multiply the $??×V^T$ matrices for document 
+# 7) Similar to the term matrices, multiply the $??Ã—V^T$ matrices for document 
 # comparisons, and compute all cosine similarities, then look at the first 7 rows and columns
 
 
@@ -78,15 +78,7 @@ neighbors("text10", n=5, tvectors = dk2, breakdown = F)
 neighbors("food", n=5, tvectors = tk2, breakdown = T)
 plot_neighbors("awesome", n=5, tvectors = tk2)
 
-#9) By default, plot_neighbors runs a PCA on the full vectors of the nearest neighboring terms and uses the
-# first three components to plot them in three dimensions. One can then rotate the plot to investigate further.
-# One can also plot a list of words in the same way. In this case, one does so into a two-dimensional space.
-# While the above two-dimensional term plot used two dimensions of the semantic space, this function
-# takes the full vector of each specified term and computes a PCA (by default) or an MDS from the vectors
-# of the terms selected. Create a vector of words ("awesome","features", "problems", "afraid","connect")
-# Use plot_wordlist (seek Rstudio help for syntax) to the words on 2 dimensions.
-words <- c("awesome","features", "problems", "afraid", "connect")
-plot_wordlist(words,tvectors=tk2,dims=2)
+
 
 #10) Another function that returns terms that are close to a given term is associate. While neighbors returns
 # the nearest n terms, associate returns whichever terms are within a particular cutoff.
